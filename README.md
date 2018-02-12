@@ -34,6 +34,10 @@ namespace SQLEventsExecutor
 
 - It is needed to convert SQL Event logs you got from the source SQL server and want to simulate on a different SQL server from ```*.XEL``` to ```*.CSV```. To do this open ```*.XEL``` file in Microsoft SQL Server Management Studio and select Extended Events\Export to\CSV file... 
 ![Export to .CSV](doc/xel2csv.png)
+- You may find helpful to check a compatibility of your database schema with target platform. In case of Azure SQL database you may want to try following urls:
+    - To compare DB engines try Azure SQL Database features https://docs.microsoft.com/en-us/azure/sql-database/sql-database-features
+    - To investigate language compatibility try Transact-SQL differences https://docs.microsoft.com/en-us/azure/sql-database/sql-database-transact-sql-information
+    - To analyze target platform before migrating try SQL Server Data Tools (SSDT) https://docs.microsoft.com/en-us/sql/ssdt/download-sql-server-data-tools-ssdt
 - To have prepared a database on target SQL server with exactly same schema and as much as possible similar data. In case that the source server is MS SQL server and target server is Azure SQL database https://azure.microsoft.com/en-us/services/sql-database/ it is needed to use ```.bacpac``` format for backup and restore instead of ```.bak```
 
 ### How to use the tool
@@ -58,4 +62,6 @@ namespace SQLEventsExecutor
 
 ## Authors
 
-* **Filip Řehořík**
+* first idea and development **Filip Řehořík**
+* thanks for consultancy and hints to **Miroslav Kubovčík**
+
