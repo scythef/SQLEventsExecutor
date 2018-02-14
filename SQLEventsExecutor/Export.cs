@@ -34,6 +34,7 @@ namespace SQLEventsExecutor
                 //add header line.
                 foreach (PropertyInfo propertyInfo in propertyInfos)
                 {
+                    if ((propertyInfo.Name != "Execution_Output") && (propertyInfo.Name != "Execution_Dataset")) //skip due to overall size of the file to later on import to the Excel
                     sb.Append(propertyInfo.Name).Append(",");
                 }
                 sb.Remove(sb.Length - 1, 1).AppendLine();

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SQLEventsExecutor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="452.4" Width="766.2">
+        Title="SQL traffic simulator" Height="452.4" Width="766.2">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,8 +19,8 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="Path"></Label>
-                <TextBox Grid.Column="1" Name="tbPath" Text=""/>
-                <Button Grid.Column="2" Name="btnOpen" Content=" ... " Click="Button_Click_Open"/>
+                <TextBox Grid.Column="1" Name="tbPath" Text="" Margin="2,2,2,2" TextChanged="tbPath_TextChanged"/>
+                <Button Grid.Column="2" Name="btnOpen" Content=" ... " Click="Button_Click_Open" Margin="2,2,2,2"/>
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -28,7 +28,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="SQL Azure Connection String"></Label>
-                <TextBox Grid.Column="1" Name="tbConnectionString" Text=""/>
+                <TextBox Grid.Column="1" Name="tbConnectionString" Text="" Margin="2,2,2,2"/>
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -36,39 +36,39 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Name="btnLoad" Grid.Column="0" Content="Load" Click="Button_Click_Load"/>
-                <Button Name="btnExecute" Grid.Column="1" Content="Execute" Click="Button_Click_Execute"/>
-                <Button Name="btnEport" Grid.Column="2" Content="Export" Click="Button_Click_Export"/>
-                <ComboBox Grid.Column="3" Name="cbFiltr" SelectedIndex="0" SelectionChanged="CbFiltr_SelectionChanged">
+                <Button Name="btnLoad" IsEnabled="{Binding CSVFound}" Grid.Column="0" Click="Button_Click_Load" Margin="2,2,2,2" HorizontalContentAlignment="Stretch">
+                    <ContentControl>
+                        <StackPanel Name="spButtonLoad" VerticalAlignment="Stretch">
+                            <Label Content="{Binding LoadCommand}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <Label Content="{Binding LoadProgressText}" HorizontalAlignment="Center"/>
+                            <Label Content="{Binding LoadErrorText}" HorizontalAlignment="Center" Foreground="Red"/>
+                            <ProgressBar Name="pbLoad" Minimum="0" Maximum="{Binding LoadProgressMax}" Height="10" Value="{Binding LoadProgressValue}" HorizontalAlignment="Stretch" Foreground="Green"/>
+                        </StackPanel>
+                    </ContentControl>
+                </Button>
+                <Button Name="btnExecute" IsEnabled="{Binding Loaded}" Grid.Column="1" Click="Button_Click_Execute" Margin="2,2,2,2" HorizontalContentAlignment="Stretch">
+                    <ContentControl>
+                        <StackPanel Name="spButtonExecute" VerticalAlignment="Stretch">
+                            <Label Content="{Binding ExecCommand}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <Label Content="{Binding ExecProgressText}" HorizontalAlignment="Center"/>
+                            <Label Content="{Binding ExecErrorText}" HorizontalAlignment="Center" Foreground="Red"/>
+                            <ProgressBar Name="pbExec" Minimum="0" Maximum="{Binding ExecProgressMax}" Height="10" Value="{Binding ExecProgressValue}" HorizontalAlignment="Stretch" Foreground="{Binding ExecProgressColor}"/>
+                        </StackPanel>
+                    </ContentControl>
+                </Button>
+                <Button Name="btnExport" IsEnabled="{Binding Loaded}" Content="Export" Grid.Column="2" Click="Button_Click_Export" Margin="2,2,2,2" FontWeight="Bold"/>
+                <ComboBox Grid.Column="3" Name="cbFiltr" SelectedIndex="0" SelectionChanged="CbFiltr_SelectionChanged" Margin="2,2,2,2">
                     <ComboBoxItem Content="All SQL events"/>
                     <ComboBoxItem Content="Loaded correctly"/>
                     <ComboBoxItem Content="Failed loading"/>
+                    <ComboBoxItem Content="All executed"/>
                     <ComboBoxItem Content="Executed correctly"/>
                     <ComboBoxItem Content="Failed execution"/>
                 </ComboBox>
-                <Label Grid.Column="4" Name="ExeLoadInfo"/>
             </Grid>
-            <StackPanel Name="spProgress" Visibility="Collapsed">
-                <ProgressBar Name="pbFileProgress" Value="0" Height="10" />
-                <TextBlock Name="tbFiles" HorizontalAlignment="Center" Text="Files loaded 0 / 0" Foreground="Green" FontWeight="Bold"/>
-                <ProgressBar Name="pbProgress" Value="0" Height="10" />
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" HorizontalAlignment="Right" Text="OK: " Foreground="Green" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Left" Name="tbOK" Foreground="Green" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="Failed: " Foreground="Red" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="3" HorizontalAlignment="Left" Name="tbFailed" Foreground="Red" FontWeight="Bold"/>
-                </Grid>
-            </StackPanel>
         </StackPanel>
-        <Grid Name="gMain" Grid.Row="1" Visibility="Collapsed">
+        <Grid Name="gMain" Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -78,12 +78,11 @@
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="0" Width="1000">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
@@ -92,7 +91,8 @@
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="60"/>
-                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Name" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
@@ -108,7 +108,7 @@
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="2" Text="CPU time" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="2" Text="Execstamp" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
@@ -122,63 +122,63 @@
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="4" Text="Reads" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="4" Text="L. reads" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="5" Text="L. reads" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="5" Text="Writes" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="6" Text="Writes" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="6" Text="Rows" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="7" Text="Rows" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="7" Text="Event" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="8" Text="Event" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="8" Text="Loading" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="9" Text="Loading" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="9" Text="Exec" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="10" Text="Exec" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="10" Text="DB name" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="11" Text="DB name" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="11" Text="Batch" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="12" Text="Batch" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="12" Text="Action" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
@@ -186,15 +186,14 @@
                         </TextBlock.RenderTransform>
                     </TextBlock>
                 </Grid>
-                <ListView Grid.Row="1" Name="lvSQLEvents" SelectionChanged="ListViewSQLEvents_SelectionChanged">
+                <ListView Grid.Row="1" Name="lvSQLEvents" SelectionChanged="ListViewSQLEvents_SelectionChanged" SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="{Binding Background}" >
+                            <Grid Width="1000" Background="{Binding Background}" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="150"/>
                                     <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="150"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
@@ -203,21 +202,26 @@
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="250"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Name}" />
                                 <TextBlock Grid.Column="1" Text="{Binding Timestamp}" />
-                                <TextBlock Grid.Column="2" Text="{Binding Cpu_time}" />
+                                <TextBlock Grid.Column="2" Text="{Binding ExecutionTimestampString}" />
                                 <TextBlock Grid.Column="3" Text="{Binding Duration}" />
-                                <TextBlock Grid.Column="4" Text="{Binding Physical_reads}" />
-                                <TextBlock Grid.Column="5" Text="{Binding Logical_reads}" />
-                                <TextBlock Grid.Column="6" Text="{Binding Writes}" />
-                                <TextBlock Grid.Column="7" Text="{Binding Row_count}" />
-                                <TextBlock Grid.Column="8" Text="{Binding Event_Result}" />
-                                <TextBlock Grid.Column="9" Text="{Binding Loading_Result}" />
-                                <TextBlock Grid.Column="10" Text="{Binding Execution_Result}" />
-                                <TextBlock Grid.Column="11" Text="{Binding Database_name}" />
-                                <TextBlock Grid.Column="12" Text="{Binding Batch_text}" />
+                                <TextBlock Grid.Column="4" Text="{Binding Logical_reads}" />
+                                <TextBlock Grid.Column="5" Text="{Binding Writes}" />
+                                <TextBlock Grid.Column="6" Text="{Binding Row_count}" />
+                                <TextBlock Grid.Column="7" Text="{Binding Event_Result}" />
+                                <TextBlock Grid.Column="8" Text="{Binding Loading_Result}" />
+                                <TextBlock Grid.Column="9" Text="{Binding Execution_Result}" />
+                                <TextBlock Grid.Column="10" Text="{Binding Database_name}" />
+                                <TextBlock Grid.Column="11" Text="{Binding Batch_text}" />
+                                <Button Name="btnFirst" Grid.Column="12" Margin="2,2,2,2" Visibility="Collapsed" Background="Green" Content="START" Tag="{Binding Index}" Height="50" Width="50" Click="ButtonGreen_Click"/>
+                                <Button Name="btnLast" Grid.Column="13" Margin="2,2,2,2" Visibility="Collapsed" Background="Red" Content="STOP" Tag="{Binding Index}" Height="50" Width="50" Click="ButtonRed_Click"/>
+                                <Rectangle Grid.Column="14" Fill="{Binding Execution_ExecColor}" Height="20" Width="20"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -225,7 +229,7 @@
             </Grid>
             <Grid Grid.Column="1" >
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Name="spDetail" Orientation="Vertical" CanVerticallyScroll="True" Visibility="Collapsed">
+                    <StackPanel Name="spDetail" Orientation="Vertical" CanVerticallyScroll="True">
                         <TextBox Name="tbBatch" Text="{Binding Batch_text}" TextWrapping="Wrap" FontWeight="Bold" HorizontalAlignment="Stretch" IsEnabled="True" IsReadOnly="True" BorderThickness="0"/>
                         <TextBox Name="tbBatchResult" Text="{Binding Execution_Output, Mode=OneWay}" Foreground="{Binding Execution_OutputColor}" TextWrapping="Wrap" HorizontalAlignment="Stretch" IsEnabled="True" IsReadOnly="True" BorderThickness="0"/>
                     </StackPanel>
