@@ -16,18 +16,16 @@ namespace SQLEventsExecutor
         public DateTime Timestamp { get; set; }
         public DateTime Timestamputc { get; set; }
         public int Cpu_time { get; set; }
-        public int Duration { get; set; }
+        public int Duration { get; set; } //microseconds - only SQL
         public int Physical_reads { get; set; }
         public int Logical_reads { get; set; }
         public int Writes { get; set; }
         public int Row_count { get; set; }
         public string Batch_text { get; set; }
-        //        public string Batch_Result { get; set; }
         public string Database_name { get; set; }
         public string Event_Result { get; set; }
         public string Loading_Result { get; set; }
         public string Loading_Error { get; set; }
-        //        public bool IsVisible { get; set; }
         private DateTime _ExecutionTimestamp;
         public DateTime ExecutionTimestamp
         {
@@ -55,7 +53,6 @@ namespace SQLEventsExecutor
                 }
             }
         }
-
         private string _Execution_Result;
         public string Execution_Result
         {
@@ -79,13 +76,27 @@ namespace SQLEventsExecutor
         {
             get
             {
-                if (Execution_Error == "") //Execution OK
+                if (Execution_Result == "") //not executed yet
                 {
-                    return Execution_Dataset;
+                    if (Loading_Result == "OK") //loading OK
+                    {
+                        return "";
+                    }
+                    else //loading error
+                    {
+                        return Loading_Error;
+                    }
                 }
-                else //Execution error
+                else //already executed
                 {
-                    return Execution_Error;
+                    if (Execution_Result == "OK") //execution OK
+                    {
+                        return Execution_Dataset;
+                    }
+                    else //execution error
+                    {
+                        return Execution_Error;
+                    }
                 }
             }
         }
@@ -93,13 +104,27 @@ namespace SQLEventsExecutor
         {
             get
             {
-                if (Execution_Error == "") //Execution OK
+                if (Execution_Result == "") //not executed yet
                 {
-                    return "DarkGreen";
+                    if (Loading_Result == "OK") //loading OK
+                    {
+                        return "DarkGreen";
+                    }
+                    else //loading error
+                    {
+                        return "Red";
+                    }
                 }
-                else //Execution error
+                else //already executed
                 {
-                    return "Red";
+                    if (Execution_Result == "OK") //execution OK
+                    {
+                        return "DarkGreen";
+                    }
+                    else //execution error
+                    {
+                        return "Red";
+                    }
                 }
             }
         }
@@ -156,6 +181,33 @@ namespace SQLEventsExecutor
                             return "LightBlue";
                         }
                     }
+                }
+            }
+        }
+        private int _ExecutionTime; //microseconds - Internet + SQL
+        public int ExecutionTime
+        {
+            get
+            {
+                return _ExecutionTime;
+            }
+            set
+            {
+                SetProperty(ref _ExecutionTime, value);
+                RaisePropertyChanged("ExecutionTimeString");
+            }
+        }
+        public string ExecutionTimeString
+        {
+            get
+            {
+                if (_ExecutionTime == 0)
+                {
+                    return "";
+                }
+                else
+                {
+                    return _ExecutionTime.ToString();
                 }
             }
         }

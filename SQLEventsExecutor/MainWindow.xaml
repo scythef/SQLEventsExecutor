@@ -19,7 +19,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="Path"></Label>
-                <TextBox Grid.Column="1" Name="tbPath" Text="" Margin="2,2,2,2" TextChanged="tbPath_TextChanged"/>
+                <TextBox Grid.Column="1" Name="tbPath" Text="" Margin="2,2,2,2" TextChanged="TbPath_TextChanged"/>
                 <Button Grid.Column="2" Name="btnOpen" Content=" ... " Click="Button_Click_Open" Margin="2,2,2,2"/>
             </Grid>
             <Grid>
@@ -43,7 +43,7 @@
                             <Label Content="{Binding LoadCommand}" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <Label Content="{Binding LoadProgressText}" HorizontalAlignment="Center"/>
                             <Label Content="{Binding LoadErrorText}" HorizontalAlignment="Center" Foreground="Red"/>
-                            <ProgressBar Name="pbLoad" Minimum="0" Maximum="{Binding LoadProgressMax}" Height="10" Value="{Binding LoadProgressValue}" HorizontalAlignment="Stretch" Foreground="Green"/>
+                            <ProgressBar Name="pbLoad" Minimum="0" Maximum="{Binding LoadProgressMax}" Height="10" Value="{Binding LoadProgressValue}" HorizontalAlignment="Stretch" Foreground="{Binding LoadProgressColor}"/>
                         </StackPanel>
                     </ContentControl>
                 </Button>
@@ -57,15 +57,17 @@
                         </StackPanel>
                     </ContentControl>
                 </Button>
-                <Button Name="btnExport" IsEnabled="{Binding Loaded}" Content="Export" Grid.Column="2" Click="Button_Click_Export" Margin="2,2,2,2" FontWeight="Bold"/>
-                <ComboBox Grid.Column="3" Name="cbFiltr" SelectedIndex="0" SelectionChanged="CbFiltr_SelectionChanged" Margin="2,2,2,2">
-                    <ComboBoxItem Content="All SQL events"/>
-                    <ComboBoxItem Content="Loaded correctly"/>
-                    <ComboBoxItem Content="Failed loading"/>
-                    <ComboBoxItem Content="All executed"/>
-                    <ComboBoxItem Content="Executed correctly"/>
-                    <ComboBoxItem Content="Failed execution"/>
-                </ComboBox>
+                <Button Name="btnExport" IsEnabled="{Binding Loaded}" Grid.Column="2" Click="Button_Click_Export" Margin="2,2,2,2" HorizontalContentAlignment="Stretch">
+                    <ContentControl>
+                        <StackPanel Name="spButtonExport" VerticalAlignment="Stretch">
+                            <Label Content="{Binding ExportCommand}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <Label Content="{Binding ExportProgressText}" HorizontalAlignment="Center"/>
+                            <Label Content="{Binding ExportErrorText}" HorizontalAlignment="Center" Foreground="Red"/>
+                            <ProgressBar Name="pbExport" Minimum="0" Maximum="{Binding ExportProgressMax}" Height="10" Value="{Binding ExportProgressValue}" HorizontalAlignment="Stretch" Foreground="Green"/>
+                        </StackPanel>
+                    </ContentControl>
+                </Button>
+                <ComboBox Grid.Column="3" Name="cbFiltr" SelectedIndex="0" SelectionChanged="CbFiltr_SelectionChanged" Margin="2,2,2,2"/>
             </Grid>
         </StackPanel>
         <Grid Name="gMain" Grid.Row="1" >
@@ -84,9 +86,7 @@
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="60"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
@@ -108,7 +108,7 @@
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="2" Text="Execstamp" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="2" Text="E. timestamp" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
@@ -122,63 +122,49 @@
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="4" Text="L. reads" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="4" Text="E. time" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="5" Text="Writes" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="5" Text="L. reads" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="6" Text="Rows" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="6" Text="Writes" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="7" Text="Event" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="7" Text="Rows" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="8" Text="Loading" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="8" Text="DB name" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="9" Text="Exec" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="9" Text="Batch" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
                             </TransformGroup>
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Grid.Column="10" Text="DB name" Margin="0,45,0,0">
-                        <TextBlock.RenderTransform>
-                            <TransformGroup>
-                                <RotateTransform Angle="315"/>
-                            </TransformGroup>
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
-                    <TextBlock Grid.Column="11" Text="Batch" Margin="0,45,0,0">
-                        <TextBlock.RenderTransform>
-                            <TransformGroup>
-                                <RotateTransform Angle="315"/>
-                            </TransformGroup>
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
-                    <TextBlock Grid.Column="12" Text="Action" Margin="0,45,0,0">
+                    <TextBlock Grid.Column="10" Text="Action" Margin="0,45,0,0">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="315"/>
@@ -195,9 +181,7 @@
                                     <ColumnDefinition Width="150"/>
                                     <ColumnDefinition Width="150"/>
                                     <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="40"/>
@@ -211,17 +195,15 @@
                                 <TextBlock Grid.Column="1" Text="{Binding Timestamp}" />
                                 <TextBlock Grid.Column="2" Text="{Binding ExecutionTimestampString}" />
                                 <TextBlock Grid.Column="3" Text="{Binding Duration}" />
-                                <TextBlock Grid.Column="4" Text="{Binding Logical_reads}" />
-                                <TextBlock Grid.Column="5" Text="{Binding Writes}" />
-                                <TextBlock Grid.Column="6" Text="{Binding Row_count}" />
-                                <TextBlock Grid.Column="7" Text="{Binding Event_Result}" />
-                                <TextBlock Grid.Column="8" Text="{Binding Loading_Result}" />
-                                <TextBlock Grid.Column="9" Text="{Binding Execution_Result}" />
-                                <TextBlock Grid.Column="10" Text="{Binding Database_name}" />
-                                <TextBlock Grid.Column="11" Text="{Binding Batch_text}" />
-                                <Button Name="btnFirst" Grid.Column="12" Margin="2,2,2,2" Visibility="Collapsed" Background="Green" Content="START" Tag="{Binding Index}" Height="50" Width="50" Click="ButtonGreen_Click"/>
-                                <Button Name="btnLast" Grid.Column="13" Margin="2,2,2,2" Visibility="Collapsed" Background="Red" Content="STOP" Tag="{Binding Index}" Height="50" Width="50" Click="ButtonRed_Click"/>
-                                <Rectangle Grid.Column="14" Fill="{Binding Execution_ExecColor}" Height="20" Width="20"/>
+                                <TextBlock Grid.Column="4" Text="{Binding ExecutionTimeString}" />
+                                <TextBlock Grid.Column="5" Text="{Binding Logical_reads}" />
+                                <TextBlock Grid.Column="6" Text="{Binding Writes}" />
+                                <TextBlock Grid.Column="7" Text="{Binding Row_count}" />
+                                <TextBlock Grid.Column="8" Text="{Binding Database_name}" />
+                                <TextBlock Grid.Column="9" Text="{Binding Batch_text}" />
+                                <Button Name="btnFirst" Grid.Column="10" Margin="2,2,2,2" Visibility="Collapsed" Background="Green" Content="START" Tag="{Binding Index}" Height="50" Width="50" Click="ButtonGreen_Click"/>
+                                <Button Name="btnLast" Grid.Column="11" Margin="2,2,2,2" Visibility="Collapsed" Background="Red" Content="STOP" Tag="{Binding Index}" Height="50" Width="50" Click="ButtonRed_Click"/>
+                                <Rectangle Grid.Column="12" Fill="{Binding Execution_ExecColor}" Height="20" Width="20"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

@@ -34,10 +34,7 @@ namespace SQLEventsExecutor
 
         protected void RaisePropertyChanged(string property)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 
@@ -52,7 +49,7 @@ namespace SQLEventsExecutor
 
         public NotificationBase(T thing = null)
         {
-            This = (thing == null) ? new T() : thing;
+            This = thing ?? new T();
         }
     }
 }
