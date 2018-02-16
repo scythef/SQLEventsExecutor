@@ -1,6 +1,11 @@
 # SQL traffic simulator
 
 This tool is suitable when you need to compare performance of two different SQL servers e.g. OnPrem MSSQL vs Azure SQL Database.
+Features:
+- Autosorting by timestamp across multiple input files
+- Execution according the time of the source event log timestamps
+- Measure duration of execution (Internet + SQL)
+- Export result to *.CSV for later analysis
 
 ## Getting Started
 
@@ -26,7 +31,7 @@ namespace SQLEventsExecutor
     }
 }
 ```
-[Sample file](doc/ConnectionsSample.cs)
+[Sample Connections.cs file](doc/ConnectionsSample.cs)
 - Compile the project SQLEventsExecutor.csproj
 - Place ```*.CSV``` files with converted SQL Events log into folder you want to use for testing. Typicaly same as CSVDefault string.
 - Create a folder ```Export``` inside the folder where ```*.CSV``` files are located.
@@ -39,7 +44,7 @@ namespace SQLEventsExecutor
     - To compare DB engines try Azure SQL Database features https://docs.microsoft.com/en-us/azure/sql-database/sql-database-features
     - To investigate language compatibility try Transact-SQL differences https://docs.microsoft.com/en-us/azure/sql-database/sql-database-transact-sql-information
     - To analyze target platform before migrating try SQL Server Data Tools (SSDT) https://docs.microsoft.com/en-us/sql/ssdt/download-sql-server-data-tools-ssdt
-- 
+- As an input you can also prepare your own CSV file. To do this it is only necessary to respect the order of columns and their meaning. [Sample CSV input file](doc/InputEventLogSample.csv)
 - To have prepared a database on target SQL server with exactly same schema and as much as possible similar data. In case that the source server is MS SQL server and target server is Azure SQL database https://azure.microsoft.com/en-us/services/sql-database/ it is needed to use ```.bacpac``` format for backup and restore instead of ```.bak```
 
 ### How to use the tool
@@ -56,11 +61,9 @@ namespace SQLEventsExecutor
 - Repeate tests in Azure with various SQL Database configuration and estimate SQL running costs more precisely
 
 ### Future improvement
-- Align execution timing exactly to the timing of the source event log timestamp
-- Measure duration of execution and comparing to the duration of source event log
 - Multithread execution
-- Ignore/skip empty event log records
-- Better main window title :)
+- Recursive execution
+
 
 ## Authors
 
