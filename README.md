@@ -37,7 +37,7 @@ namespace SQLEventsExecutor
 - Create a folder ```Export``` inside the folder where ```*.CSV``` files are located.
 
 ### Prerequisites
-
+- Created ```*.XEL``` file or files. For more information about Extended Events see https://docs.microsoft.com/en-us/sql/relational-databases/extended-events/extended-events
 - It is needed to convert SQL Event logs you got from the source SQL server and want to simulate on a different SQL server from ```*.XEL``` to ```*.CSV```. To do this open ```*.XEL``` file in Microsoft SQL Server Management Studio and select Extended Events\Export to\CSV file... 
 ![Export to .CSV](doc/xel2csv.png)
 - You may find helpful to check a compatibility of your database schema with target platform. In case of Azure SQL database you may want to try following urls:
