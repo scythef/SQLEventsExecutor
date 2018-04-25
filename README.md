@@ -37,7 +37,32 @@ namespace SQLEventsExecutor
 - Create a folder ```Export``` inside the folder where ```*.CSV``` files are located.
 
 ### Prerequisites
-- Created ```*.XEL``` file or files. For more information about Extended Events see https://docs.microsoft.com/en-us/sql/relational-databases/extended-events/extended-events
+- Created ```*.XEL``` file or files. For more information about Extended Events see https://docs.microsoft.com/en-us/sql/relational-databases/extended-events/extended-events and here is a quick start step by step how to create an event log https://docs.microsoft.com/en-us/sql/relational-databases/extended-events/quick-start-extended-events-in-sql-server?view=sql-server-2017
+![Select only relevant events](doc/CaptureEvents.JPG)
+```
+CREATE EVENT SESSION [your session name] 
+   ON SERVER 
+   ADD EVENT sqlserver.sql_batch_completed
+   (
+      ACTION(sqlserver.database_name) 
+      WHERE ([sqlserver].[database_name]=N'your database name')
+   )
+   ADD TARGET package0.event_file
+   (SET 
+      filename=N'your file name including your file server path'
+   ) 
+   WITH 
+   (
+      MAX_MEMORY=4096 KB,
+      EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,
+      MAX_DISPATCH_LATENCY=30 SECONDS,
+      MAX_EVENT_SIZE=0 KB,
+      MEMORY_PARTITION_MODE=NONE,
+      TRACK_CAUSALITY=OFF,
+      STARTUP_STATE=ON
+   )
+GO
+```
 - It is needed to convert SQL Event logs you got from the source SQL server and want to simulate on a different SQL server from ```*.XEL``` to ```*.CSV```. To do this open ```*.XEL``` file in Microsoft SQL Server Management Studio and select Extended Events\Export to\CSV file... 
 ![Export to .CSV](doc/xel2csv.png)
 - You may find helpful to check a compatibility of your database schema with target platform. In case of Azure SQL database you may want to try following urls:
